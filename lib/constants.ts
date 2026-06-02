@@ -115,5 +115,13 @@ export const ARTICLE_STATUSES = [
 ] as const;
 export type ArticleStatus = (typeof ARTICLE_STATUSES)[number];
 
+// Auto-publish quality gate thresholds.
+export const QUALITY = {
+  minWords: 450,
+  maxWords: 1000,
+  minScore: 7, // AI editor score (1-10) required to auto-publish
+  maxTitleSimilarity: 0.6, // Jaccard on title words; above this = too similar
+} as const;
+
 export const MEDICAL_DISCLAIMER =
   "This content is for self-management and personal reflection only. It is not medical, psychological, or therapeutic advice.";

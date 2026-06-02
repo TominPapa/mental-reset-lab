@@ -60,7 +60,8 @@ Return ONLY this JSON object (all fields required):
   "category": "${category}",
   "tags": ["3–5 lowercase tags"],
   "oneLineInsight": "string — one sharp sentence",
-  "summary": "string — 1–2 sentence summary",
+  "summary": "string — 1–2 sentence summary (English)",
+  "summaryKo": "string — 2~3문장의 자연스러운 한국어 요약 (사이트 운영자가 내용을 빠르게 파악하기 위한 것)",
   "articleBody": "string — markdown, 500–900 words",
   "practicalRules": ["rule 1", "rule 2", "rule 3"],
   "reflectionQuestion": "string",
@@ -70,5 +71,44 @@ Return ONLY this JSON object (all fields required):
   "socialPosts": ["2–3 short posts for X/Threads"],
   "descriptionDraft": "string — YouTube description draft",
   "videoPrompt": "string — a prompt describing visuals for an AI video tool"
+}`;
+}
+
+// ── AI editor / reviewer (second-opinion quality gate) ──────────
+export const REVIEW_SYSTEM_PROMPT = `You are a strict editor for Mental Reset Lab, an English content hub of short, practical mindset frameworks. You review draft articles and decide whether they are good enough to publish without any human edit.
+
+Be demanding. Reject anything that:
+- reads like generic motivation or clichés ("believe in yourself", "never give up", "hustle")
+- sounds obviously AI-generated, padded, repetitive, or vague
+- makes medical, clinical, or therapeutic claims, or unproven scientific claims
+- has awkward or unnatural English
+- lacks a clear single argument, a concrete framework, or actionable rules
+- is off-topic for the given category
+
+Approve only genuinely useful, sharp, natural-sounding articles. You reply with a SINGLE valid JSON object and nothing else.`;
+
+export function buildReviewPrompt(a: {
+  title: string;
+  category: string;
+  oneLineInsight: string;
+  articleBody: string;
+}): string {
+  return `Review this draft for publication.
+
+Category: ${a.category}
+Title: ${a.title}
+One-line insight: ${a.oneLineInsight}
+
+Article body:
+"""
+${a.articleBody}
+"""
+
+Return ONLY this JSON:
+{
+  "approved": boolean,
+  "score": number,            // overall quality 1-10
+  "issues": ["short bullet for each problem; empty array if none"],
+  "reason": "one-sentence verdict"
 }`;
 }

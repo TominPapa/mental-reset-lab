@@ -10,6 +10,7 @@ export const generatedContentSchema = z.object({
   tags: z.array(z.string()).default([]),
   oneLineInsight: z.string().min(1),
   summary: z.string().default(""),
+  summaryKo: z.string().default(""),
   articleBody: z.string().min(1),
   practicalRules: z.array(z.string()).default([]),
   reflectionQuestion: z.string().default(""),
@@ -22,3 +23,12 @@ export const generatedContentSchema = z.object({
 });
 
 export type GeneratedContentParsed = z.infer<typeof generatedContentSchema>;
+
+export const reviewSchema = z.object({
+  approved: z.boolean(),
+  score: z.number().min(0).max(10),
+  issues: z.array(z.string()).default([]),
+  reason: z.string().default(""),
+});
+
+export type ReviewParsed = z.infer<typeof reviewSchema>;

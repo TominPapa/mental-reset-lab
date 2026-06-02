@@ -38,6 +38,9 @@ create table if not exists public.articles (
   status              text not null default 'draft'
                         check (status in ('draft','published','scheduled','archived')),
   published_at        timestamptz,
+  summary_ko          text,          -- Korean summary for admin oversight
+  review              jsonb,         -- AI editor verdict {approved, score, issues, reason}
+  auto_generated      boolean not null default false,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );

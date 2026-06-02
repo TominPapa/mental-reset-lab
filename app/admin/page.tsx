@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Container } from "@/components/Container";
+import { RunPipelineButton } from "@/components/admin/RunPipelineButton";
 import { formatDate } from "@/lib/utils/format";
 import type { Article, TopicIdea } from "@/lib/types";
 
@@ -40,6 +41,16 @@ export default async function AdminDashboard() {
     .order("priority", { ascending: false })
     .limit(8);
 
+  // Auto-generated drafts that did NOT pass the quality gate — need a look.
+  const { data: heldRaw } = await supabase
+    .from("articles")
+    .select("id,title,summary_ko,review,updated_at")
+    .eq("status", "draft")
+    .eq("auto_generated", true)
+    .order("updated_at", { ascending: false })
+    .limit(10);
+  const held = (heldRaw as Article[] | null) ?? [];
+
   const total = drafts + published + scheduled + archived;
   const stats = [
     { label: "Total", value: total },
@@ -68,6 +79,63 @@ export default async function AdminDashboard() {
           </div>
         ))}
       </div>
+
+      {/* Auto-publish control */}
+      <div className="mt-8 rounded-lg border border-border bg-surface p-5">
+        <p className="text-sm font-medium">자동 발행</p>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          매일 1편 자동 생성 → AI 편집자 검수 + 금지어/길이/중복 검사 → 통과 시 자동
+          발행, 미통과 시 아래 &quot;검수 보류&quot;로 대기합니다. 아래 버튼으로 지금 한 편
+          시험 생성도 가능합니다.
+        </p>
+        <div className="mt-3">
+          <RunPipelineButton />
+        </div>
+      </div>
+
+      {/* Held for review (failed the quality gate) */}
+      {held.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+            검수 보류 — 확인 필요 ({held.length})
+          </h2>
+          <ul className="mt-3 space-y-3">
+            {held.map((a) => (
+              <li
+                key={a.id}
+                className="rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <Link
+                    href={`/admin/articles/${a.id}/edit`}
+                    className="font-medium hover:underline"
+                  >
+                    {a.title}
+                  </Link>
+                  {a.review?.score != null && (
+                    <span className="shrink-0 text-xs text-muted">
+                      품질 {a.review.score}/10
+                    </span>
+                  )}
+                </div>
+                {a.summary_ko && (
+                  <p className="mt-1 text-sm text-muted">{a.summary_ko}</p>
+                )}
+                {a.review?.reason && (
+                  <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
+                    사유: {a.review.reason}
+                  </p>
+                )}
+                {a.review?.issues?.length ? (
+                  <p className="mt-1 text-xs text-muted">
+                    · {a.review.issues.join(" · ")}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <section>

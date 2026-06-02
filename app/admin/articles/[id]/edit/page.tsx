@@ -77,6 +77,30 @@ export default async function EditArticlePage({
           </Link>
         </div>
       </div>
+      {(a.summary_ko || a.review) && (
+        <div className="mb-6 rounded-lg border border-border bg-surface p-4">
+          <div className="flex items-center gap-2">
+            <span className="eyebrow">한국어 요약</span>
+            {a.auto_generated && (
+              <span className="text-xs text-muted">· 자동 생성</span>
+            )}
+          </div>
+          {a.summary_ko ? (
+            <p className="mt-2 text-sm">{a.summary_ko}</p>
+          ) : (
+            <p className="mt-2 text-sm text-muted">(요약 없음)</p>
+          )}
+          {a.review && (
+            <p className="mt-3 text-xs text-muted">
+              검수: {a.review.approved ? "통과" : "보류"} · 품질 {a.review.score}/10
+              {a.review.reason ? ` · ${a.review.reason}` : ""}
+              {a.review.issues?.length
+                ? ` · 이슈: ${a.review.issues.join(", ")}`
+                : ""}
+            </p>
+          )}
+        </div>
+      )}
       <ArticleEditor initial={initial} />
     </Container>
   );

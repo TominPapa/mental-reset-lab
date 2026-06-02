@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils/slug";
+import { runAutoPublish, type AutoPublishResult } from "@/lib/ai/pipeline";
 import type { ArticleStatus } from "@/lib/constants";
 
 export interface ArticleFormInput {
@@ -184,6 +185,24 @@ export async function setArticleStatus(
   revalidatePath("/");
   revalidatePath("/articles");
   return { ok: true };
+}
+
+// Manually run the auto-publish pipeline once (same logic as the daily cron).
+export async function triggerAutoPublish(): Promise<AutoPublishResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Not authenticated." };
+
+  const result = await runAutoPublish();
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
+  revalidatePath("/articles");
+  if (result.slug) revalidatePath(`/articles/${result.slug}`);
+  return result;
 }
 
 export async function signOut() {

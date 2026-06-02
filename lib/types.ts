@@ -19,8 +19,19 @@ export interface Article {
   youtube_url: string | null;
   status: ArticleStatus;
   published_at: string | null; // ISO timestamp
+  summary_ko: string | null; // Korean summary for admin oversight
+  review: ArticleReview | null; // AI editor verdict
+  auto_generated: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface ArticleReview {
+  approved: boolean;
+  score: number; // 1-10
+  issues: string[];
+  reason: string;
+  checks?: { banned: string[]; words: number; tooSimilarTo?: string };
 }
 
 export interface ContentAsset {
@@ -90,6 +101,7 @@ export interface GeneratedContent {
   tags: string[];
   oneLineInsight: string;
   summary: string;
+  summaryKo: string;
   articleBody: string;
   practicalRules: string[];
   reflectionQuestion: string;
