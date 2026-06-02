@@ -24,42 +24,56 @@ export const SITE = {
 } as const;
 
 // Content categories (master plan §6.1). `slug` is the URL form.
+// `color` = deep tone for light backgrounds (covers, body emphasis on light).
+// `colorDark` = lighter tone for dark backgrounds (readable emphasis in dark mode).
 export const CATEGORIES = [
   {
     slug: "ai-era-mindset",
     name: "AI-Era Mindset",
     description:
       "Direction, focus, and execution in a world of accelerating tools. The threat is rarely AI — it is a vague direction.",
+    color: "#4338ca",
+    colorDark: "#a5b4fc",
   },
   {
     slug: "self-mastery",
     name: "Self-Mastery",
     description:
       "Habits, restraint, and consistency. How to keep small promises to yourself until they compound.",
+    color: "#15803d",
+    colorDark: "#4ade80",
   },
   {
     slug: "emotional-clarity",
     name: "Emotional Clarity",
     description:
       "Thinking clearly without being run by your moods. Separating signal from emotional noise.",
+    color: "#b45309",
+    colorDark: "#fbbf24",
   },
   {
     slug: "focus-attention",
     name: "Focus & Attention",
     description:
       "Protecting attention in an environment built to fragment it. Distraction, phones, and staying with one thing.",
+    color: "#0f766e",
+    colorDark: "#5eead4",
   },
   {
     slug: "resilience",
     name: "Resilience",
     description:
       "Staying steady through failure, stress, and uncertainty. Recovering fast and keeping perspective when things go wrong.",
+    color: "#9f1239",
+    colorDark: "#fda4af",
   },
   {
     slug: "taking-action",
     name: "Taking Action",
     description:
       "Systems over motivation. Starting, following through, and beating procrastination when you don't feel like it.",
+    color: "#c2410c",
+    colorDark: "#fb923c",
   },
 ] as const;
 
@@ -73,6 +87,12 @@ export function categoryBySlug(slug: string) {
 
 export function categoryByName(name: string) {
   return CATEGORIES.find((c) => c.name === name);
+}
+
+// Accent colors for a category, with a sensible fallback (amber).
+export function categoryColor(name: string): { color: string; colorDark: string } {
+  const c = categoryByName(name);
+  return { color: c?.color ?? "#b45309", colorDark: c?.colorDark ?? "#fbbf24" };
 }
 
 // Tone options (master plan §13.4)

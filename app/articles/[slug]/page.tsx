@@ -5,9 +5,8 @@ import { Container } from "@/components/Container";
 import { Markdown } from "@/components/Markdown";
 import { ArticleCard } from "@/components/ArticleCard";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import { YouTubeCTA } from "@/components/YouTubeCTA";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/data";
-import { categoryByName, SITE } from "@/lib/constants";
+import { categoryByName, categoryColor, SITE } from "@/lib/constants";
 import { formatDate, readingTime } from "@/lib/utils/format";
 
 export const revalidate = 300;
@@ -51,6 +50,11 @@ export default async function ArticlePage({
 
   const related = await getRelatedArticles(article, 3);
   const cat = categoryByName(article.category);
+  const accent = categoryColor(article.category);
+  const accentStyle = {
+    "--cat-accent": accent.color,
+    "--cat-accent-dark": accent.colorDark,
+  } as React.CSSProperties;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -164,7 +168,7 @@ export default async function ArticlePage({
           </div>
         )}
 
-        <div className="mt-10">
+        <div className="mt-10" style={accentStyle}>
           <Markdown>{article.body}</Markdown>
         </div>
 
@@ -191,10 +195,18 @@ export default async function ArticlePage({
           </section>
         )}
 
-        <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-border pt-8">
-          <span className="text-sm text-muted">Prefer the 30-second version?</span>
-          <YouTubeCTA />
-        </div>
+        {SITE.youtubeUrl && (
+          <div className="mt-12 border-t border-border pt-8">
+            <a
+              href={SITE.youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-foreground/40"
+            >
+              See more →
+            </a>
+          </div>
+        )}
       </Container>
 
       {related.length > 0 && (
