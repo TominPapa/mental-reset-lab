@@ -44,22 +44,22 @@ export const CATEGORIES = [
       "Thinking clearly without being run by your moods. Separating signal from emotional noise.",
   },
   {
-    slug: "focus-systems",
-    name: "Focus Systems",
+    slug: "focus-attention",
+    name: "Focus & Attention",
     description:
-      "Protecting attention in an environment engineered to fragment it. Distraction, phones, and deep work.",
+      "Protecting attention in an environment built to fragment it. Distraction, phones, and staying with one thing.",
   },
   {
-    slug: "founder-mindset",
-    name: "Founder Mindset",
+    slug: "resilience",
+    name: "Resilience",
     description:
-      "Solo building, failure, and uncertainty. Operating with clarity when no one hands you a plan.",
+      "Staying steady through failure, stress, and uncertainty. Recovering fast and keeping perspective when things go wrong.",
   },
   {
-    slug: "action-systems",
-    name: "Action Systems",
+    slug: "taking-action",
+    name: "Taking Action",
     description:
-      "Systems over motivation. Designing actions your tired, unmotivated self can still follow.",
+      "Systems over motivation. Starting, following through, and beating procrastination when you don't feel like it.",
   },
 ] as const;
 
