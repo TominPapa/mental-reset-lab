@@ -1,5 +1,66 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+# AGENTS.md — AI 에이전트 공통 규칙 (Mental Reset Lab)
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+이 문서는 Claude Code 외의 AI 에이전트(주로 **Codex**, 그리고 **Antigravity 2.0**)가 이 저장소에서 작업할 때 지켜야 할 공통 규칙이다.
+프로젝트 전반의 규칙은 `CLAUDE.md`를, 기능/DB 기준은 `PROJECT_SPEC.md`를, 최종 기준은 마스터 기획서를 따른다.
+
+---
+
+## 1. 에이전트 역할 분담 (기획서 18장)
+
+| 에이전트 | 역할 | 적합 작업 |
+|---|---|---|
+| **Claude Code** | 메인 개발 | Next.js 구조 생성, Supabase CRUD, 관리자 페이지, 다중 파일 수정, 기능 구현 |
+| **Codex** | 검수 / 빌드 수정 / 리팩토링 | 코드 리뷰, 빌드·타입 오류 수정, 테스트 추가, API 연동 검증, JSON 스키마 검토, 리팩토링 |
+| **Antigravity 2.0** | 병렬 QA / 실험 | 전체 페이지 점검, SEO 체크리스트 확인, 브라우저 기반 검수, 대량 리팩토링 실험 |
+
+Antigravity 2.0은 **보조/실험용**이다. 메인 개발 도구로 고정하지 않는다.
+
+---
+
+## 2. 모든 에이전트 공통 원칙
+
+1. **MVP 범위를 넘지 않는다.** 새 기능을 추가하지 않는다.
+   금지 항목(YouTube 업로드 API, 외부 블로그 자동 발행, 결제, 회원가입, 댓글/커뮤니티, 전체 다국어)은 구현하지 않는다. (`CLAUDE.md` 4장 참조)
+2. **제품 범위(scope)를 임의로 바꾸지 않는다.** 리뷰/리팩토링 작업은 기존 동작을 보존한다.
+3. **기획서와의 일관성을 우선한다.** 기능 ID(F-00x / A-00x), DB 필드명, 카테고리명, 금지 표현 목록은 기획서·`PROJECT_SPEC.md`·`CONTENT_GUIDE.md`와 일치해야 한다.
+4. **비밀키를 노출하지 않는다.** `service_role` 키, API 키는 서버 전용. 클라이언트 번들/커밋에 들어가면 안 된다.
+5. **Tailwind v4 / App Router 컨벤션을 깨지 않는다.** `tailwind.config.js` 추가 금지, `params`는 비동기.
+
+---
+
+## 3. 편집 전 패치 플랜 규칙 (필수)
+
+코드를 수정하기 전에 **반드시 간결한 패치 플랜을 먼저 제시**한다. 형식:
+
+```text
+1. 변경 대상 파일 목록
+2. 각 파일에서 무엇을 왜 바꾸는지 (1~2줄)
+3. 범위/동작 변경 여부 (없어야 정상)
+4. 리스크 또는 확인 필요 사항
+```
+
+플랜이 합의되기 전에는 대규모 수정을 적용하지 않는다. 작은 자명한 수정은 플랜 안에 묶어 처리한다.
+
+---
+
+## 4. Codex 검수 표준 항목 (기획서 19.2)
+
+리뷰 시 다음을 점검한다:
+
+1. 빌드 오류
+2. TypeScript 오류
+3. 관리자 라우트 보안 (인증 가드, service_role 노출)
+4. DB 스키마 일관성 (`PROJECT_SPEC.md` 12장 필드와 일치)
+5. SEO 메타데이터 구현 (`SEO_RULES.md`)
+6. 과도하게 복잡한 코드 (단순화)
+
+리뷰 마무리에는 **제품 범위를 바꾸지 말 것**, **MVP 밖 기능을 추가하지 말 것**, **수정 전 간결한 패치 플랜을 제시할 것**을 지킨다.
+
+---
+
+## 5. Antigravity 2.0 QA 항목
+
+- 사이트 전체 페이지 렌더링/링크 점검
+- SEO 체크리스트 확인 (`SEO_RULES.md`)
+- 금지 표현 검사 동작 확인 (`CONTENT_GUIDE.md` banned phrases)
+- 발행 전 체크리스트 확인 (`PROJECT_SPEC.md` 자동 발행 정책)
