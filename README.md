@@ -51,8 +51,10 @@ npm run dev                  # http://localhost:3000
 ### 5. Vercel 배포
 1. GitHub에 푸시 후 Vercel에서 import (또는 `vercel`).
 2. `.env.local`의 모든 값을 Vercel **Environment Variables**에 등록.
-3. `CRON_SECRET`에 긴 랜덤 문자열 등록 → `vercel.json`의 Cron이 매시 `/api/revalidate`를
-   호출해 예약 글을 발행한다 (Vercel Cron은 `Authorization: Bearer <CRON_SECRET>` 자동 전송).
+3. `CRON_SECRET`에 긴 랜덤 문자열 등록 → `vercel.json`의 Cron이 하루 1회 `/api/revalidate`를
+   호출해 예약 글 상태를 정리한다 (Hobby 플랜은 일 1회 제한). Vercel Cron은
+   `Authorization: Bearer <CRON_SECRET>`을 자동 전송. 예약 발행 자체는 Cron 없이도
+   공개 쿼리(발행시각 도달분 노출) + 5분 ISR 갱신으로 동작하므로 일 1회로 충분하다.
 
 ### 6. Google (검색/분석)
 - **Search Console**: 도메인 등록 후 `https://<도메인>/sitemap.xml` 제출.
