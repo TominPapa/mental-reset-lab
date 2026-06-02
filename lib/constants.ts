@@ -1,8 +1,21 @@
 // Shared constants for Mental Reset Lab.
 
+// Resolve the canonical site URL robustly:
+// 1. An explicit NEXT_PUBLIC_SITE_URL (used for a real custom domain) wins —
+//    unless it's a localhost value left over from local dev.
+// 2. On Vercel, fall back to the auto-provided production domain.
+// 3. Otherwise localhost for local dev.
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (explicit && !explicit.includes("localhost")) return explicit;
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercel) return `https://${vercel}`;
+  return explicit || "http://localhost:3000";
+}
+
 export const SITE = {
   name: process.env.NEXT_PUBLIC_SITE_NAME || "Mental Reset Lab",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  url: resolveSiteUrl(),
   tagline:
     "Short mental frameworks for focus, discipline, and clear decisions in the AI age.",
   description:
