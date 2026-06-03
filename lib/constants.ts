@@ -5,11 +5,21 @@
 //    unless it's a localhost value left over from local dev.
 // 2. On Vercel, fall back to the auto-provided production domain.
 // 3. Otherwise localhost for local dev.
+const PRODUCTION_URL = "https://mentalresetlab.com";
+
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (explicit && !explicit.includes("localhost")) return explicit;
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercel) return `https://${vercel}`;
+  // Honor an explicit real custom domain (not localhost, not a vercel.app value).
+  if (
+    explicit &&
+    !explicit.includes("localhost") &&
+    !explicit.includes(".vercel.app")
+  ) {
+    return explicit;
+  }
+  // Anywhere on Vercel, use the canonical custom domain.
+  if (process.env.VERCEL) return PRODUCTION_URL;
+  // Local dev.
   return explicit || "http://localhost:3000";
 }
 
