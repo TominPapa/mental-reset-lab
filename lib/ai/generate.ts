@@ -79,20 +79,30 @@ const topicSchema = z.object({
 });
 
 // Invent a fresh topic when the backlog is empty (keeps the pipeline running).
+// If targetCategory is given, the topic is forced into that category (for balance).
 export async function generateTopic(
   existingTitles: string[],
+  targetCategory?: string,
 ): Promise<{ topic: string; category: string }> {
   const avoid = existingTitles.slice(0, 60).join("\n");
+  const valid =
+    targetCategory && (CATEGORY_NAMES as readonly string[]).includes(targetCategory)
+      ? targetCategory
+      : undefined;
   const system =
     "You generate article topics for Mental Reset Lab — short, practical mindset frameworks for focus, discipline, self-mastery, resilience, and execution in the AI era. Reply with a SINGLE JSON object only.";
+  const categoryLine = valid
+    ? `The topic MUST be in this category: ${valid}.`
+    : `The topic must fit exactly one of these categories: ${CATEGORY_NAMES.join(", ")}.`;
   const user = `Propose ONE fresh, specific article topic that is NOT similar to any of these existing titles:
 ${avoid || "(none yet)"}
 
-The topic must fit exactly one of these categories: ${CATEGORY_NAMES.join(", ")}.
+${categoryLine}
 It should be a sharp, concrete angle (not generic motivation).
 
-Return ONLY: { "topic": "a clear article title", "category": "one of the categories above" }`;
+Return ONLY: { "topic": "a clear article title", "category": "${valid ?? "one of the categories above"}" }`;
   const parsed = topicSchema.parse(await askJson(system, user, 512));
+  parsed.category = valid ?? parsed.category;
   if (!(CATEGORY_NAMES as readonly string[]).includes(parsed.category)) {
     parsed.category = CATEGORY_NAMES[0];
   }
