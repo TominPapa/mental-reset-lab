@@ -123,3 +123,14 @@ body {
 .hairline {
   border-top: 1px solid var(--border);
 }
+
+/* Category accent text — switches tone for dark mode.
+   Set --cat / --cat-dark inline on an ancestor. */
+.cat-accent {
+  color: var(--cat, var(--foreground));
+}
+@media (prefers-color-scheme: dark) {
+  .cat-accent {
+    color: var(--cat-dark, var(--foreground));
+  }
+}

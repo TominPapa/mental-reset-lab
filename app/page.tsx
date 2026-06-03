@@ -5,6 +5,7 @@ import { FeaturedArticle } from "@/components/FeaturedArticle";
 import { FrameworkCard } from "@/components/FrameworkCard";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { YouTubeCTA } from "@/components/YouTubeCTA";
+import { HeroBackground } from "@/components/HeroBackground";
 import { getPublishedArticles, getPublishedFrameworks } from "@/lib/data";
 import { SITE, CATEGORIES } from "@/lib/constants";
 
@@ -21,20 +22,21 @@ export default async function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="border-b border-border">
-        <Container size="wide" className="py-20 sm:py-28">
+      <section className="relative isolate overflow-hidden border-b border-border">
+        <HeroBackground />
+        <Container size="wide" className="py-28 sm:py-40">
           <p className="eyebrow">Mindset frameworks for the AI age</p>
-          <h1 className="font-display mt-4 max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight sm:text-6xl">
+          <h1 className="font-display mt-5 max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight sm:text-7xl">
             {SITE.tagline}
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted">
             No clichés. No therapy talk. Just clear, repeatable thinking for
             focus, self-mastery, and execution.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               href="/articles"
-              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-contrast transition-opacity hover:opacity-90"
+              className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-contrast transition-opacity hover:opacity-90"
             >
               Read the articles
             </Link>
@@ -86,9 +88,15 @@ export default async function Home() {
               <Link
                 key={c.slug}
                 href={`/categories/${c.slug}`}
+                style={
+                  {
+                    "--cat": c.color,
+                    "--cat-dark": c.colorDark,
+                  } as React.CSSProperties
+                }
                 className="group flex gap-4 bg-surface p-6 transition-colors hover:bg-background"
               >
-                <span className="font-display text-lg text-muted">
+                <span className="cat-accent font-display text-lg font-medium">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span>
