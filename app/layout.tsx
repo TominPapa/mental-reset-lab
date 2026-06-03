@@ -43,6 +43,9 @@ export const metadata: Metadata = {
     canonical: "/",
     types: { "application/rss+xml": `${SITE.url}/feed.xml` },
   },
+  verification: {
+    google: "-q-YzA7WioRY4BkdsoJAnCz2sKU7UwdOM6WTcE-1NIA",
+  },
 };
 
 export default function RootLayout({
