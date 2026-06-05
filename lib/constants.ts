@@ -23,6 +23,15 @@ function resolveSiteUrl(): string {
   return explicit || "http://localhost:3000";
 }
 
+const YOUTUBE_URL = "https://www.youtube.com/@TheMind-g4l";
+
+function resolveYouTubeUrl(): string {
+  const env = process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_URL;
+  // Ignore the placeholder; honor a real configured URL, else the canonical one.
+  if (env && !env.includes("your-channel")) return env;
+  return YOUTUBE_URL;
+}
+
 export const SITE = {
   name: process.env.NEXT_PUBLIC_SITE_NAME || "Mental Reset Lab",
   url: resolveSiteUrl(),
@@ -30,7 +39,7 @@ export const SITE = {
     "Short mental frameworks for focus, discipline, and clear decisions in the AI age.",
   description:
     "Practical mindset frameworks for focus, self-mastery, and execution in the AI era. No clichés, no therapy talk — just clear, repeatable thinking.",
-  youtubeUrl: process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_URL || "",
+  youtubeUrl: resolveYouTubeUrl(),
 } as const;
 
 // Content categories (master plan §6.1). `slug` is the URL form.
